@@ -1,0 +1,144 @@
+package analizer;
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+    private Symbol s;
+    
+    public void syntax_error(Symbol s){
+        this.s = s;
+    }
+
+    public Symbol getS(){
+        return this.s;
+}
+:};
+
+terminal Linea,
+    T_dato,
+    If,
+    While,
+    In,
+    Out,
+    For,
+    Fun,
+    Operador_Referencia,
+    Operador_Igual,
+    Operador_Suma,
+    Operador_Resta,
+    Operador_Multiplicacion,
+    Operador_Division,
+    Operador_Modulo,
+    Op_Relacional,
+    Parentesis_a,
+    Parentesis_c,
+    Llave_a,
+    Llave_c,
+    Op_Separator,
+    Identificador,
+    Numero,
+    ERROR;
+non terminal INICIO, FUNCION, DECLARATIONS,
+BODY, PARAMS, ASSIGN, OPERATION, OPERATOR, VALUE, EXP,
+CONSOLA, OPERATION_BOOLEAN, CICLOS, FOR, WHILE, CONDITIONAL
+;
+start with INICIO;
+
+INICIO ::= 
+    FUNCION|
+    DECLARATIONS|
+    EXP|
+    CONSOLA|
+    CICLOS|
+    CONDITIONAL|
+    INICIO FUNCION|
+    INICIO DECLARATIONS|
+    INICIO EXP|
+    INICIO CONSOLA|
+    INICIO CONDITIONAL|
+    INICIO CICLOS
+    
+;
+BODY ::=
+    DECLARATIONS|
+    EXP|
+    CONSOLA|
+    CICLOS|
+    CONDITIONAL|
+    BODY DECLARATIONS|
+    BODY EXP|
+    BODY CONSOLA|
+    BODY CONDITIONAL|
+    BODY CICLOS
+;
+FUNCION ::= 
+    Fun Identificador Parentesis_a Parentesis_c Llave_a Llave_c|
+    Fun Identificador Parentesis_a PARAMS Parentesis_c Llave_a BODY Llave_c|
+    Fun Identificador Parentesis_a Parentesis_c Llave_a BODY Llave_c|
+    Fun Identificador Parentesis_a PARAMS Parentesis_c Llave_a Llave_c
+;
+PARAMS ::=
+    Operador_Referencia Identificador PARAMS|
+    Identificador|
+    Op_Separator PARAMS|
+    Identificador PARAMS
+;
+DECLARATIONS ::=
+    T_dato Identificador|
+    T_dato Identificador Operador_Igual ASSIGN
+;
+ASSIGN ::=
+    Numero|
+    Identificador|
+    OPERATION
+;
+OPERATION ::=
+    Parentesis_a OPERATION Parentesis_c|
+    VALUE OPERATOR VALUE|
+    Parentesis_a OPERATION Parentesis_c OPERATOR Numero|
+    Parentesis_a OPERATION Parentesis_c OPERATOR OPERATION|
+    OPERATOR VALUE
+;
+OPERATOR ::=
+    Operador_Suma|
+    Operador_Resta|
+    Operador_Multiplicacion|
+    Operador_Division|
+    Operador_Modulo
+;
+VALUE ::=
+    Identificador|
+    Numero
+;
+EXP ::=
+    Identificador Operador_Igual VALUE|
+    Identificador Operador_Igual OPERATION|
+    OPERATION_BOOLEAN
+;
+OPERATION_BOOLEAN ::=
+    Identificador Op_Relacional VALUE
+;
+CONSOLA ::=
+    In Parentesis_a VALUE Parentesis_c|
+    Out Parentesis_a VALUE Parentesis_c|
+    In Parentesis_a EXP Parentesis_c|
+    Out Parentesis_a EXP Parentesis_c
+;
+CICLOS ::=
+    FOR|
+    WHILE
+;
+FOR ::=
+    For Parentesis_a DECLARATIONS Op_Separator OPERATION_BOOLEAN Parentesis_c Llave_a BODY Llave_c|
+    For Parentesis_a DECLARATIONS Op_Separator OPERATION_BOOLEAN Parentesis_c Llave_a Llave_c
+;
+WHILE ::=
+    While Parentesis_a OPERATION_BOOLEAN Parentesis_c Llave_a BODY Llave_c|
+    While Parentesis_a OPERATION_BOOLEAN Parentesis_c Llave_a Llave_c
+;
+CONDITIONAL ::=
+    If Parentesis_a OPERATION_BOOLEAN Parentesis_c Llave_a BODY Llave_c|
+    If Parentesis_a OPERATION_BOOLEAN Parentesis_c Llave_a Llave_c
+;
+

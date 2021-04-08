@@ -1,0 +1,27 @@
+package analizer;
+public enum Tokens {
+    Linea,
+    T_dato,
+    If,
+    While,
+    In,
+    Out,
+    For,
+    Fun,
+    Operador_Referencia,
+    Operador_Igual,
+    Operador_Suma,
+    Operador_Resta,
+    Operador_Multiplicacion,
+    Operador_Division,
+    Operador_Modulo,
+    Op_Relacional,
+    Parentesis_a,
+    Parentesis_c,
+    Llave_a,
+    Llave_c,
+    Op_Separator,
+    Identificador,
+    Numero,
+    ERROR;
+}
