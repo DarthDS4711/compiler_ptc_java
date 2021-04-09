@@ -41,7 +41,7 @@ terminal Linea,
     ERROR;
 non terminal INICIO, FUNCION, DECLARATIONS,
 BODY, PARAMS, ASSIGN, OPERATION, OPERATOR, VALUE, EXP,
-CONSOLA, OPERATION_BOOLEAN, CICLOS, FOR, WHILE, CONDITIONAL
+CONSOLA, OPERATION_BOOLEAN, CICLOS, FOR, WHILE, CONDITIONAL, EXP_OP
 ;
 start with INICIO;
 
@@ -49,6 +49,7 @@ INICIO ::=
     FUNCION|
     DECLARATIONS|
     EXP|
+    EXP_OP|
     CONSOLA|
     CICLOS|
     CONDITIONAL|
@@ -57,12 +58,14 @@ INICIO ::=
     INICIO EXP|
     INICIO CONSOLA|
     INICIO CONDITIONAL|
-    INICIO CICLOS
+    INICIO CICLOS|
+    INICIO EXP_OP
     
 ;
 BODY ::=
     DECLARATIONS|
     EXP|
+    EXP_OP|
     CONSOLA|
     CICLOS|
     CONDITIONAL|
@@ -70,7 +73,8 @@ BODY ::=
     BODY EXP|
     BODY CONSOLA|
     BODY CONDITIONAL|
-    BODY CICLOS
+    BODY CICLOS|
+    BODY EXP_OP
 ;
 FUNCION ::= 
     Fun Identificador Parentesis_a Parentesis_c Llave_a Llave_c|
@@ -80,6 +84,7 @@ FUNCION ::=
 ;
 PARAMS ::=
     Operador_Referencia Identificador PARAMS|
+    Operador_Referencia Identificador| 
     Identificador|
     Op_Separator PARAMS|
     Identificador PARAMS
@@ -95,10 +100,18 @@ ASSIGN ::=
 ;
 OPERATION ::=
     Parentesis_a OPERATION Parentesis_c|
+    Parentesis_a VALUE Parentesis_c|
     VALUE OPERATOR VALUE|
-    Parentesis_a OPERATION Parentesis_c OPERATOR Numero|
+    Parentesis_a OPERATION Parentesis_c OPERATOR VALUE|
     Parentesis_a OPERATION Parentesis_c OPERATOR OPERATION|
     OPERATOR VALUE
+;
+EXP_OP ::=
+    Parentesis_a EXP_OP Parentesis_c|
+    Parentesis_a VALUE Parentesis_c|
+    VALUE OPERATOR VALUE|
+    Parentesis_a EXP_OP Parentesis_c OPERATOR VALUE|
+    Parentesis_a EXP_OP Parentesis_c OPERATOR OPERATION
 ;
 OPERATOR ::=
     Operador_Suma|
@@ -122,7 +135,6 @@ OPERATION_BOOLEAN ::=
 CONSOLA ::=
     In Parentesis_a VALUE Parentesis_c|
     Out Parentesis_a VALUE Parentesis_c|
-    In Parentesis_a EXP Parentesis_c|
     Out Parentesis_a EXP Parentesis_c
 ;
 CICLOS ::=

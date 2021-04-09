@@ -15,6 +15,8 @@ características de lenguajes de tipado fuerte
 
 * Windows 7 en adelante
 * Java jdk 8
+* JFlex
+* JCup
 
 ### Installing
 
@@ -40,6 +42,10 @@ Contributors names and contact info
 
 ## Version History
 
+* 1.0.2 RC 2
+    * Candidata a producción (analizador sintáctico)
+    * Correción de errores de sintaxis 
+    * Inclusión de más casos de sintaxis válida
 * 1.0.2 RC 1
     * Candidata a producción (analizador sintáctico)
     * Implementación regreso al editor del código
