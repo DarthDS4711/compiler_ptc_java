@@ -11,11 +11,18 @@ package Classes;
  */
 public class Token {
     
-    public Token(String token, String lexeme){
+    public Token(String token, String lexeme, int line){
         this.tokenResult = token;
         this.lexeme = lexeme;
+        this.line = line;
     }
 
+    public Token(String tokenResult, String lexeme) {
+        this.tokenResult = tokenResult;
+        this.lexeme = lexeme;
+    }
+    
+    
     public String getTokenResult() {
         return tokenResult;
     }
@@ -23,7 +30,12 @@ public class Token {
     public String getLexeme() {
         return lexeme;
     }
+
+    public int getLine() {
+        return line;
+    }
     
     private String tokenResult;
     private String lexeme;
+    private int line;
 }

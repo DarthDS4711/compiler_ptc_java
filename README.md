@@ -37,11 +37,15 @@ Any advise for common problems or issues.
 
 Contributors names and contact info
 
-*Daniel Santiago Alatorre 
-*Ian Noe Prieto Puga
+* Daniel Santiago Alatorre 
+* Ian Noe Prieto Puga
 
 ## Version History
-
+* 1.1.1 G1 (alpha 1)
+    * Primera beta de la version 1.1.1
+    * Inclusión del analizador semántico 
+    * Deteccion de variables y funciones
+    * Errores menores corregidos 
 * 1.0.2 RC 2
     * Candidata a producción (analizador sintáctico)
     * Correción de errores de sintaxis 

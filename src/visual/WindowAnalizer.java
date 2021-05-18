@@ -119,6 +119,7 @@ public class WindowAnalizer extends javax.swing.JFrame {
         List<Token> listTokens = new ArrayList<>();
         try {
             analizeCode.analizeLexical(listTokens);
+            analizeCode.printTable();
             String errorsCode = analizeCode.analizeSyntax();
             VisualInformation window = new VisualInformation();
             window.setInformationLexical(listTokens);
