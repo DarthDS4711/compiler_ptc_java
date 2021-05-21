@@ -39,11 +39,12 @@ terminal Linea,
     Identificador,
     Numero,
     Numero_entero,
+    Valor_Logico,
     ERROR;
 non terminal INICIO, FUNCION, DECLARATIONS,
 BODY, PARAMS, ASSIGN, OPERATION, OPERATOR, VALUE, EXP,
-CONSOLA, OPERATION_BOOLEAN, CICLOS, FOR, WHILE, CONDITIONAL
-;
+CONSOLA, OPERATION_BOOLEAN, CICLOS, FOR, WHILE, CONDITIONAL, CALL_FUN,
+PARAMS_CALL;
 start with INICIO;
 
 INICIO ::= 
@@ -54,13 +55,15 @@ INICIO ::=
     CONSOLA|
     CICLOS|
     CONDITIONAL|
+    CALL_FUN|
     INICIO FUNCION|
     INICIO DECLARATIONS|
     INICIO EXP|
     INICIO CONSOLA|
     INICIO CONDITIONAL|
     INICIO CICLOS|
-    INICIO OPERATION
+    INICIO OPERATION|
+    INICIO CALL_FUN
 ;
 BODY ::=
     DECLARATIONS|
@@ -69,12 +72,14 @@ BODY ::=
     CONSOLA|
     CICLOS|
     CONDITIONAL|
+    CALL_FUN|
     BODY DECLARATIONS|
     BODY EXP|
     BODY CONSOLA|
     BODY CONDITIONAL|
     BODY CICLOS|
-    BODY OPERATION
+    BODY OPERATION|
+    BODY CALL_FUN
 ;
 FUNCION ::= 
     Fun Identificador Parentesis_a Parentesis_c Llave_a Llave_c|
@@ -97,6 +102,7 @@ ASSIGN ::=
     Numero|
     Numero_entero|
     Identificador|
+    Valor_Logico|
     OPERATION
 ;
 OPERATION ::=
@@ -113,7 +119,8 @@ OPERATOR ::=
 VALUE ::=
     Identificador|
     Numero|
-    Numero_entero
+    Numero_entero|
+    Valor_Logico
 ;
 EXP ::=
     Identificador Operador_Igual VALUE|
@@ -143,5 +150,13 @@ WHILE ::=
 CONDITIONAL ::=
     If Parentesis_a OPERATION_BOOLEAN Parentesis_c Llave_a BODY Llave_c|
     If Parentesis_a OPERATION_BOOLEAN Parentesis_c Llave_a Llave_c
+;
+CALL_FUN ::=
+    Identificador Parentesis_a Parentesis_c|
+    Identificador Parentesis_a PARAMS_CALL Parentesis_c
+;
+PARAMS_CALL ::=
+    Identificador Op_Separator PARAMS_CALL|
+    Identificador
 ;
 

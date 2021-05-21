@@ -31,6 +31,8 @@ espacio=[ ,\t,\r,\n]+
 /* Tipos de datos */
 ( INT | INTB | FLOAT ) {return new Symbol(sym.T_dato, yychar, yyline, yytext());}
 
+/*Valor logico*/
+( TRUE|FALSE ) {return new Symbol(sym.Valor_Logico, yychar, yyline, yytext());} 
 
 /* Palabra reservada If */
 ( IF ) {return new Symbol(sym.If, yychar, yyline, yytext());}
@@ -95,8 +97,9 @@ espacio=[ ,\t,\r,\n]+
 /* Numero */
 {D} {return new Symbol(sym.Numero, yychar, yyline, yytext());} 
 
-/* Numero */
+/* Numero ENTERO */
 {DN} {return new Symbol(sym.Numero_entero, yychar, yyline, yytext());} 
+
 
 /* Error de analisis */
  . {return new Symbol(sym.ERROR, yychar, yyline, yytext());} 

@@ -4,7 +4,9 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/Documents/NetBeansProjects/Compilador_PTC/src/analizer/AnalizeSemantic.java</file>
-            <file>file:/D:/Documents/NetBeansProjects/Compilador_PTC/src/analizer/semantic/Variable.java</file>
+            <file>file:/D:/Documents/NetBeansProjects/Compilador_PTC/src/analizer/semantic/Assign.java</file>
+            <file>file:/D:/Documents/NetBeansProjects/Compilador_PTC/src/analizer/semantic/BlockCode.java</file>
+            <file>file:/D:/Documents/NetBeansProjects/Compilador_PTC/src/Classes/TokenInLine.java</file>
             <file>file:/D:/Documents/NetBeansProjects/Compilador_PTC/src/handleSourceCode/InputSourceCode.java</file>
         </group>
     </open-files>

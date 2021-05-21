@@ -31,67 +31,57 @@ public class AnalizeSemantic {
         String errors = "";
         for (int index = 0; index < this.table.size(); index++) {
             TokenInLine line = this.table.getLineTable(index);
-            if(this.detectBlock(line)){
-                errors += detectErrorsInBlock(line);
+            if (this.detectBlock(line) && !this.changueContextToBlock) {
                 this.changueContextToBlock = true;
                 this.auxInLines.add(line);
-            }
-            else if(this.changueContextToBlock){
-                errors += detectErrorsInBlock(line);
+            } else if (this.changueContextToBlock) {
                 this.auxInLines.add(line);
                 this.changueContextToBlock = this.detectEndBlock(line);
-                if(!this.changueContextToBlock){
+                if (!this.changueContextToBlock) {
                     this.assignBlock();
                 }
-            }
-            else{
+            } else {
                 errors += this.detectErrorsInAssignGlobal(line);
             }
-            
         }
+        errors += this.detectErrorsInBlocks();
+        errors += this.detectUnusedvariables();
         return errors;
     }
-    
-    private void assignBlock(){
+
+    private void assignBlock() {
         BlockCode code = new BlockCode();
         code.setListPreviusVariables(this.listVariables);
         code.setLines(this.auxInLines);
         this.listBlockCodes.add(code);
-        //this.auxInLines.clear();
     }
-    
-    private boolean detectEndBlock(TokenInLine line){
-        if(line.size() > 0){
+
+    private boolean detectEndBlock(TokenInLine line) {
+        if (line.size() > 0) {
             Token t = line.getToken(0);
-            if(t.getLexeme().equals("}")){
+            if (t.getLexeme().equals("}")) {
                 return false;
             }
         }
         return true;
     }
-    
-    private String detectErrorsInBlock(TokenInLine line){
-        
-        return "encontre una linea del bloque\n";
-    }
-    
-    public boolean detectBlock(TokenInLine line){
-        if(line.size() > 0){
+
+    public boolean detectBlock(TokenInLine line) {
+        if (line.size() > 0) {
             Token t = line.getToken(0);
-            if(t.getLexeme().equals("IF")){
+            if (t.getLexeme().equals("IF")) {
                 return true;
             }
         }
         return false;
     }
-    
-    public void printSizeBlock(){
-        for(BlockCode code : this.listBlockCodes){
-            code.sizeBlock();
+
+    public void printSizeBlock() {
+        for (BlockCode code : this.listBlockCodes) {
+            //code.sizeBlock();
         }
     }
 
-    
     private String detectErrorsInAssignGlobal(TokenInLine line) {
         Assign a = new Assign();
         a.detectAsign(line);
@@ -100,42 +90,45 @@ public class AnalizeSemantic {
         int i = 0;
         if (a.getV() != null) {
             this.listVariables.add(a.getV());
-        } 
+        }
         List<String> nameVariables = a.getNameVariables();
-        for(i = (a.getV() != null)?1:0; i < nameVariables.size(); i++){
+        for (i = (a.getV() != null) ? 1 : 0; i < nameVariables.size(); i++) {
             String nameVariable = nameVariables.get(i);
-            int result = this.detectErrorsUndeclaredVariable(nameVariable);
-            if(result == -1){
-                error += "La variable: " + nameVariable +" no ha sido declarada\n";
-            }else{
-                this.listVariables.get(result).setUsed(true);
-          
+            if (!nameVariable.equals(" ")) {
+                int result = this.detectErrorsUndeclaredVariable(nameVariable);
+                if (result == -1) {
+                    error += "La variable: " + nameVariable + " no ha sido declarada\n";
+                } else {
+                    this.listVariables.get(result).setUsed(true);
+
+                }
             }
+
         }
         return error;
     }
 
-    public String detectUnusedvariables(){
+    public String detectUnusedvariables() {
         String warning = "";
-        for(Variable v : this.listVariables){
+        for (Variable v : this.listVariables) {
             System.out.println(v.isUsed());
-            if(!v.isUsed()){
+            if (!v.isUsed()) {
                 warning += "la variable: " + v.getIdVariable() + " no ha sido utilizada\n";
             }
         }
         return warning;
     }
-    
-    public String detectErrorsInBlocks(){
+
+    public String detectErrorsInBlocks() {
         String errors = "";
-        for(BlockCode code : this.listBlockCodes){
+        for (BlockCode code : this.listBlockCodes) {
             errors += code.detectErrorsInBlock();
             errors += code.detectUnusedvariables();
-            System.out.println("primer blocque");
+            //System.out.println("primer blocque");
         }
         return errors;
     }
-    
+
     private int detectErrorsUndeclaredVariable(String nameVariable) {
         int position = -1;
         for (int i = 0; i < this.listVariables.size(); i++) {

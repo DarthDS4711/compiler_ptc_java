@@ -148,11 +148,14 @@ public class InputSourceCode {
                     listTokens.add(tokenResult);
                     this.line.addToken(tokenResult);
                     break;
+                case Valor_Logico:
+                    tokenResult = new Token("Token valor logico", lexer.lexeme, lineAnalized);
+                    listTokens.add(tokenResult);
+                    this.line.addToken(tokenResult);
+                    break;
                 case Linea:
                     this.table.addLineInTable(line);
                     this.line = new TokenInLine();
-                    lineAnalized++;
-                    System.out.println("Linea: " + lineAnalized);
                     break;
                 case ERROR:
                     tokenResult = new Token("Token invalido", lexer.lexeme);
@@ -187,8 +190,6 @@ public class InputSourceCode {
         //this.table.printAllTable();
         this.semanticToAnalize = new AnalizeSemantic(this.table);
         errorrsAndwarnings += this.semanticToAnalize.detectAndInicializeTheTableSymbol();
-        errorrsAndwarnings += this.semanticToAnalize.detectUnusedvariables();
-        errorrsAndwarnings += this.semanticToAnalize.detectErrorsInBlocks();
         this.semanticToAnalize.printSizeBlock();
         return errorrsAndwarnings;
     }

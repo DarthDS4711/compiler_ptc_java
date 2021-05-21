@@ -46,6 +46,9 @@ espacio=[ ,\t,\r]+
 /* Palabra reservada Fun */
 ( FUN ) {lexeme=yytext(); return Fun;}
 
+/*Valor logico true|false*/
+( TRUE|FALSE ) {lexeme=yytext(); return Valor_Logico;}
+
 /* Operador Referencia */
 ( "%" ) {lexeme=yytext(); return Operador_Referencia;}
 
@@ -94,6 +97,7 @@ espacio=[ ,\t,\r]+
 
 /*Numero entero*/
 {DN} {lexeme=yytext(); return Numero_entero;}
+
 
 /* Error de analisis */
  . {return ERROR;}

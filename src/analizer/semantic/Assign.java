@@ -15,7 +15,7 @@ import java.util.*;
 public class Assign {
     private Variable v;
     private String symbolEqual;
-    private String symbolsToAsign[];
+    private List<String> symbolsToAsign;
     private String symbolNumericAssign[];
     private String nameVariableAssign;
     private String symbolOperation;
@@ -28,7 +28,7 @@ public class Assign {
     
     public Assign() {
         this.v = null;
-        this.symbolsToAsign = new String[2];
+        this.symbolsToAsign = new ArrayList<>();
         this.symbolNumericAssign = new String[2];
         this.nameVariableAssign = " ";
         this.symbolEqual = " ";
@@ -72,13 +72,6 @@ public class Assign {
         this.symbolEqual = symbolEqual;
     }
 
-    public String[] getSymbolsToAsign() {
-        return symbolsToAsign;
-    }
-
-    public void setSymbolsToAsign(String[] symbolsToAsign) {
-        this.symbolsToAsign = symbolsToAsign;
-    }
     
     private boolean isSymbolOperation(String token){
         if(token.equals("Token suma")){
@@ -103,7 +96,6 @@ public class Assign {
         String nameVariable = " ";
         String typeVariable = " "; 
         int numericSymbol = 0;
-        int numberSymbol = 0;
         for(int i = 0; i < line.size(); i++){
             Token t = line.getToken(i);
             if(t.getTokenResult().equals("T_Dato")){
@@ -116,14 +108,12 @@ public class Assign {
             }
             if(t.getTokenResult().equals("Token identificador") && this.nameVariableAssign.equals(" ")){
                 this.nameVariableAssign = t.getLexeme();
-                //typeVariable
             }
             if(t.getTokenResult().equals("Token igual")){
                 this.symbolEqual = t.getLexeme();
             }
             if(t.getTokenResult().equals("Token identificador") && !this.symbolEqual.equals(" ")){
-                this.symbolsToAsign[numberSymbol] = t.getLexeme();
-                numberSymbol++;
+                this.symbolsToAsign.add(t.getLexeme());
             }
             else if(t.getTokenResult().equals("Token numero real") && !this.symbolEqual.equals(" ")){
                 this.symbolNumericAssign[numericSymbol] = t.getTokenResult();
@@ -158,9 +148,9 @@ public class Assign {
         else{
             nameVariables.add(this.nameVariableAssign);
         }
-        for(int i = 0; i < 2; i++){
-            if(this.symbolsToAsign[i] != null){
-                String value = this.symbolsToAsign[i];
+        for(int i = 0; i < this.symbolsToAsign.size(); i++){
+            if(this.symbolsToAsign.get(i) != null){
+                String value = this.symbolsToAsign.get(i);
                 if(this.detectRepeatVariable(nameVariables, value)){
                     nameVariables.add(value);
                 }
@@ -174,19 +164,7 @@ public class Assign {
     }
 
     public void printInfo(){
-        if(v != null){
-            System.out.println(v);
-        }
-        if(!this.nameVariableAssign.equals(" ")){
-            System.out.println("Nombre variable: " + this.nameVariableAssign);
-        }
-        System.out.println("Variables o numeros");
-        for(int i = 0; i < 2; i++){
-            if(this.symbolsToAsign[i] != null){
-                System.out.println(this.symbolsToAsign[i]);
-            }
-        }
-        System.out.println("Simbolo operacion: " + this.symbolOperation);
+        
     }
     
     

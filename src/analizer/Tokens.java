@@ -24,5 +24,6 @@ public enum Tokens {
     Identificador,
     Numero,
     Numero_entero,
+    Valor_Logico,
     ERROR;
 }

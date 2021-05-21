@@ -41,6 +41,10 @@ Contributors names and contact info
 * Ian Noe Prieto Puga
 
 ## Version History
+* 1.1.1 G3 (alpha 3)
+    * Inclusión de un nuevi tipo de dato (lógico) TRUE, FALSE
+    * Corrección en la detección de variables globales y bloques (if, while, for)
+    * Errores menores corregidos 
 * 1.1.1 G2 (alpha 2)
     * Retiro de la compatibilidad de asignaciones tipo a = (a + 1) + 2
     * Corrección de asignación de parametros en las funciones
