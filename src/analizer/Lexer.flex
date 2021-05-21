@@ -5,7 +5,7 @@ import java_cup.runtime.*;
 %class Lexer
 %type Tokens
 L=[a-zA-Z_]+
-D=(\+|\-)?[0-9]+(\.[0-9]+)?
+D=(-)?[0-9]+\.[0-9]+
 DN=[0-9]+ 
 espacio=[ ,\t,\r]+
 %{
@@ -89,8 +89,11 @@ espacio=[ ,\t,\r]+
 /* Identificador */
 {L}({L}|{DN})* {lexeme=yytext(); return Identificador;}
 
-/* Numero */
+/* Numero real*/
 {D} {lexeme=yytext(); return Numero;}
+
+/*Numero entero*/
+{DN} {lexeme=yytext(); return Numero_entero;}
 
 /* Error de analisis */
  . {return ERROR;}

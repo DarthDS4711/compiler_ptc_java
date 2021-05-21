@@ -9,7 +9,7 @@ import java_cup.runtime.Symbol;
 %char
 %unicode
 L=[a-zA-Z_]+
-D=(\+|\-)?[0-9]+(\.[0-9]+)?
+D=(\-)?[0-9]+\.[0-9]+
 DN=[0-9]+ 
 espacio=[ ,\t,\r,\n]+
 %{
@@ -94,6 +94,9 @@ espacio=[ ,\t,\r,\n]+
 
 /* Numero */
 {D} {return new Symbol(sym.Numero, yychar, yyline, yytext());} 
+
+/* Numero */
+{DN} {return new Symbol(sym.Numero_entero, yychar, yyline, yytext());} 
 
 /* Error de analisis */
  . {return new Symbol(sym.ERROR, yychar, yyline, yytext());} 

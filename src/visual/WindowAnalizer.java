@@ -119,11 +119,12 @@ public class WindowAnalizer extends javax.swing.JFrame {
         List<Token> listTokens = new ArrayList<>();
         try {
             analizeCode.analizeLexical(listTokens);
-            analizeCode.printTable();
             String errorsCode = analizeCode.analizeSyntax();
+            String errorSemantic = analizeCode.printTable();
             VisualInformation window = new VisualInformation();
             window.setInformationLexical(listTokens);
             window.setInformationSyntax(errorsCode);
+            window.setInformationSemantic(errorSemantic);
             window.setVisible(true);
         } catch (IOException ex) {
             Logger.getLogger(WindowAnalizer.class.getName()).log(Level.SEVERE, null, ex);

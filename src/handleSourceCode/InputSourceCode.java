@@ -44,10 +44,12 @@ public class InputSourceCode {
                 case If:
                     tokenResult = new Token("Token if", lexer.lexeme);
                     listTokens.add(tokenResult);
+                    this.line.addToken(tokenResult);
                     break;
                 case While:
                     tokenResult = new Token("Token while", lexer.lexeme);
                     listTokens.add(tokenResult);
+                    this.line.addToken(tokenResult);
                     break;
                 case In:
                     tokenResult = new Token("Token in", lexer.lexeme);
@@ -60,6 +62,7 @@ public class InputSourceCode {
                 case For:
                     tokenResult = new Token("Token For", lexer.lexeme);
                     listTokens.add(tokenResult);
+                    this.line.addToken(tokenResult);
                     break;
                 case Fun:
                     tokenResult = new Token("Token fun", lexer.lexeme, lineAnalized);
@@ -103,6 +106,7 @@ public class InputSourceCode {
                 case Op_Relacional:
                     tokenResult = new Token("Token relacional", lexer.lexeme);
                     listTokens.add(tokenResult);
+                    this.line.addToken(tokenResult);
                     break;
                 case Parentesis_a:
                     tokenResult = new Token("Token parentesis abierto", lexer.lexeme);
@@ -117,10 +121,12 @@ public class InputSourceCode {
                 case Llave_a:
                     tokenResult = new Token("Token llave abierto", lexer.lexeme);
                     listTokens.add(tokenResult);
+                    this.line.addToken(tokenResult);
                     break;
                 case Llave_c:
                     tokenResult = new Token("Token llave cerrado", lexer.lexeme);
                     listTokens.add(tokenResult);
+                    this.line.addToken(tokenResult);
                     break;
                 case Op_Separator:
                     tokenResult = new Token("Token separador", lexer.lexeme, lineAnalized);
@@ -133,7 +139,12 @@ public class InputSourceCode {
                     this.line.addToken(tokenResult);
                     break;
                 case Numero:
-                    tokenResult = new Token("Token numero", lexer.lexeme, lineAnalized);
+                    tokenResult = new Token("Token numero real", lexer.lexeme, lineAnalized);
+                    listTokens.add(tokenResult);
+                    this.line.addToken(tokenResult);
+                    break;
+                case Numero_entero:
+                    tokenResult = new Token("Token numero entero", lexer.lexeme, lineAnalized);
                     listTokens.add(tokenResult);
                     this.line.addToken(tokenResult);
                     break;
@@ -168,14 +179,18 @@ public class InputSourceCode {
         return errorsSyntax;
     }
     
-    public void printTable(){
+    public String printTable(){
+        String errorrsAndwarnings = "";
         if(this.line.size() > 0){
             this.table.addLineInTable(this.line);
         }
-        this.table.printAllTable();
+        //this.table.printAllTable();
         this.semanticToAnalize = new AnalizeSemantic(this.table);
-        this.semanticToAnalize.detectAndInicializeTheTableSymbol();
-        this.semanticToAnalize.printVariablesDetect();
+        errorrsAndwarnings += this.semanticToAnalize.detectAndInicializeTheTableSymbol();
+        errorrsAndwarnings += this.semanticToAnalize.detectUnusedvariables();
+        errorrsAndwarnings += this.semanticToAnalize.detectErrorsInBlocks();
+        this.semanticToAnalize.printSizeBlock();
+        return errorrsAndwarnings;
     }
     
     private String sourceCode;

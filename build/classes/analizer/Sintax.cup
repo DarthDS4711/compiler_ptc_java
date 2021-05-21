@@ -38,10 +38,11 @@ terminal Linea,
     Op_Separator,
     Identificador,
     Numero,
+    Numero_entero,
     ERROR;
 non terminal INICIO, FUNCION, DECLARATIONS,
 BODY, PARAMS, ASSIGN, OPERATION, OPERATOR, VALUE, EXP,
-CONSOLA, OPERATION_BOOLEAN, CICLOS, FOR, WHILE, CONDITIONAL, EXP_OP
+CONSOLA, OPERATION_BOOLEAN, CICLOS, FOR, WHILE, CONDITIONAL
 ;
 start with INICIO;
 
@@ -49,7 +50,7 @@ INICIO ::=
     FUNCION|
     DECLARATIONS|
     EXP|
-    EXP_OP|
+    OPERATION|
     CONSOLA|
     CICLOS|
     CONDITIONAL|
@@ -59,13 +60,12 @@ INICIO ::=
     INICIO CONSOLA|
     INICIO CONDITIONAL|
     INICIO CICLOS|
-    INICIO EXP_OP
-    
+    INICIO OPERATION
 ;
 BODY ::=
     DECLARATIONS|
     EXP|
-    EXP_OP|
+    OPERATION|
     CONSOLA|
     CICLOS|
     CONDITIONAL|
@@ -74,7 +74,7 @@ BODY ::=
     BODY CONSOLA|
     BODY CONDITIONAL|
     BODY CICLOS|
-    BODY EXP_OP
+    BODY OPERATION
 ;
 FUNCION ::= 
     Fun Identificador Parentesis_a Parentesis_c Llave_a Llave_c|
@@ -83,11 +83,11 @@ FUNCION ::=
     Fun Identificador Parentesis_a PARAMS Parentesis_c Llave_a Llave_c
 ;
 PARAMS ::=
-    Operador_Referencia Identificador PARAMS|
-    Operador_Referencia Identificador| 
-    Identificador|
+    Operador_Referencia T_dato Identificador PARAMS|
+    Operador_Referencia T_dato Identificador| 
+    T_dato Identificador|
     Op_Separator PARAMS|
-    Identificador PARAMS
+    T_dato Identificador PARAMS
 ;
 DECLARATIONS ::=
     T_dato Identificador|
@@ -95,23 +95,13 @@ DECLARATIONS ::=
 ;
 ASSIGN ::=
     Numero|
+    Numero_entero|
     Identificador|
     OPERATION
 ;
 OPERATION ::=
-    Parentesis_a OPERATION Parentesis_c|
     Parentesis_a VALUE Parentesis_c|
-    VALUE OPERATOR VALUE|
-    Parentesis_a OPERATION Parentesis_c OPERATOR VALUE|
-    Parentesis_a OPERATION Parentesis_c OPERATOR OPERATION|
-    OPERATOR VALUE
-;
-EXP_OP ::=
-    Parentesis_a EXP_OP Parentesis_c|
-    Parentesis_a VALUE Parentesis_c|
-    VALUE OPERATOR VALUE|
-    Parentesis_a EXP_OP Parentesis_c OPERATOR VALUE|
-    Parentesis_a EXP_OP Parentesis_c OPERATOR OPERATION
+    VALUE OPERATOR VALUE
 ;
 OPERATOR ::=
     Operador_Suma|
@@ -122,7 +112,8 @@ OPERATOR ::=
 ;
 VALUE ::=
     Identificador|
-    Numero
+    Numero|
+    Numero_entero
 ;
 EXP ::=
     Identificador Operador_Igual VALUE|
@@ -130,7 +121,7 @@ EXP ::=
     OPERATION_BOOLEAN
 ;
 OPERATION_BOOLEAN ::=
-    Identificador Op_Relacional VALUE
+    VALUE Op_Relacional VALUE
 ;
 CONSOLA ::=
     In Parentesis_a VALUE Parentesis_c|

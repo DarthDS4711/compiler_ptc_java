@@ -23,5 +23,6 @@ public enum Tokens {
     Op_Separator,
     Identificador,
     Numero,
+    Numero_entero,
     ERROR;
 }

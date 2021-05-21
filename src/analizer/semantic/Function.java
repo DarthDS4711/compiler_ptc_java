@@ -1,5 +1,4 @@
 package analizer.semantic;
-import java.util.*;
 
 public class Function {
     private boolean used;

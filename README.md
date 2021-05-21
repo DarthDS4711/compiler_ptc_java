@@ -41,8 +41,14 @@ Contributors names and contact info
 * Ian Noe Prieto Puga
 
 ## Version History
+* 1.1.1 G2 (alpha 2)
+    * Retiro de la compatibilidad de asignaciones tipo a = (a + 1) + 2
+    * Corrección de asignación de parametros en las funciones
+    * Detección de variables globales y bloques (if, while, for)
+    * Errores menores corregidos 
+    * Inclusión del texto del análisis semantico
 * 1.1.1 G1 (alpha 1)
-    * Primera beta de la version 1.1.1
+    * Primer alpha la version 1.1.1
     * Inclusión del analizador semántico 
     * Deteccion de variables y funciones
     * Errores menores corregidos 
