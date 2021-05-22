@@ -190,7 +190,6 @@ public class InputSourceCode {
         //this.table.printAllTable();
         this.semanticToAnalize = new AnalizeSemantic(this.table);
         errorrsAndwarnings += this.semanticToAnalize.detectAndInicializeTheTableSymbol();
-        this.semanticToAnalize.printSizeBlock();
         return errorrsAndwarnings;
     }
     

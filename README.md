@@ -26,7 +26,7 @@ características de lenguajes de tipado fuerte
 
 * Se abre el ejecutable del programa
 * Se escribe el codigo fuente del lenguaje
-*Se da click al boton compilar
+* Se da click al boton compilar
 ```
 ## Help
 
@@ -41,8 +41,12 @@ Contributors names and contact info
 * Ian Noe Prieto Puga
 
 ## Version History
+* 1.1.1 G4 (alpha 4)
+    * Deteccion de las funciones declaradas por el usuario
+    * Detección de las variables empleadas como parametros
+    * Errores menores corregidos 
 * 1.1.1 G3 (alpha 3)
-    * Inclusión de un nuevi tipo de dato (lógico) TRUE, FALSE
+    * Inclusión de un nuevo tipo de dato (lógico) TRUE, FALSE
     * Corrección en la detección de variables globales y bloques (if, while, for)
     * Errores menores corregidos 
 * 1.1.1 G2 (alpha 2)

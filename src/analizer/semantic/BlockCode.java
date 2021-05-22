@@ -42,20 +42,20 @@ public class BlockCode {
 
     public String detectErrorsInBlock() {
         String errors = "";
-        System.out.println("Hola");
+        //System.out.println("Hola");
         for (int index = 1; index < this.lines.size(); index++) {
             TokenInLine line = this.lines.get(index);
             if(this.detectBlock(line) && !this.changueContextToBlock){
                 this.changueContextToBlock = true;
                 this.auxInLines.add(line);
-                System.out.println("\t\tPrimela linea");
+                //System.out.println("\t\tPrimela linea");
             }
             else if(this.changueContextToBlock){
                 this.auxInLines.add(line);
                 this.changueContextToBlock = this.detectEndBlock(line);
                 if(!this.changueContextToBlock){
                     this.assignBlock();
-                    System.out.println("\t\tFin bloque");
+                    //System.out.println("\t\tFin bloque");
                 }
             }
             else{
@@ -69,7 +69,7 @@ public class BlockCode {
     public boolean detectBlock(TokenInLine line) {
         if (line.size() > 0) {
             Token t = line.getToken(0);
-            if (t.getLexeme().equals("IF")) {
+            if (t.getLexeme().equals("IF") || t.getLexeme().equals("FOR") || t.getLexeme().equals("WHILE")) {
                 return true;
             }
         }
