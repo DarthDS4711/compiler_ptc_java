@@ -19,7 +19,7 @@ public class Assign {
     private String symbolEqual;
     private String valueOfSymbolOperation = " ";
     private List<String> symbolsToAsign;
-    private List<String>symbolNumericAssign;
+    private List<String> symbolNumericAssign;
     private String nameVariableAssign;
     private String symbolOperation;
     private FunctionCalled functionCalled;
@@ -132,17 +132,19 @@ public class Assign {
             } else if (t.getTokenResult().equals("Token identificador") && !typeVariable.equals(" ")) {
                 nameVariable = t.getLexeme();
                 this.v = new Variable(nameVariable, typeVariable);
-            } else if (t.getTokenResult().equals("Token identificador") && this.nameVariableAssign.equals(" ")) {
+                typeVariable = " ";
+            } else if (t.getTokenResult().equals("Token igual")) {
+                this.symbolEqual = t.getLexeme();
+            } else if (t.getTokenResult().equals("Token identificador") && (this.v == null && this.nameVariableAssign.equals(" "))) {
                 this.nameVariableAssign = t.getLexeme();
+            } else if (t.getTokenResult().equals("Token identificador")) {
+                this.symbolsToAsign.add(t.getLexeme());
+                System.out.println("variable: " + t.getLexeme());
             } else if (t.getTokenResult().equals("Token parentesis abierto") && !this.nameVariableAssign.equals(" ")) {
                 this.nameFunctionAssign = this.nameVariableAssign;
                 assingFunction(line);
                 this.nameVariableAssign = " ";
                 break;
-            } else if (t.getTokenResult().equals("Token igual")) {
-                this.symbolEqual = t.getLexeme();
-            } else if (t.getTokenResult().equals("Token identificador") && !this.symbolEqual.equals(" ")) {
-                this.symbolsToAsign.add(t.getLexeme());
             } else if (this.isValueOperation(tokenAnalize)) {
                 this.symbolNumericAssign.add(t.getTokenResult());
             } else if (this.isSymbolOperation(t.getTokenResult()) && !this.symbolEqual.equals(" ")) {
@@ -154,17 +156,6 @@ public class Assign {
         }
     }
 
-    private boolean detectRepeatVariable(List<String> nameVariables, String value) {
-        boolean state = true;
-        for (String str : nameVariables) {
-            if (str.equals(value)) {
-                state = false;
-                break;
-            }
-        }
-        return state;
-    }
-
     public List<String> getNameVariables() {
         List<String> nameVariables = new ArrayList<>();
         if (this.v != null) {
@@ -173,14 +164,10 @@ public class Assign {
             nameVariables.add(this.nameVariableAssign);
         }
         for (int i = 0; i < this.symbolsToAsign.size(); i++) {
-            if (this.symbolsToAsign.get(i) != null) {
-                String value = this.symbolsToAsign.get(i);
-                if (this.detectRepeatVariable(nameVariables, value)) {
-                    nameVariables.add(value);
-                }
-            }
+            String value = this.symbolsToAsign.get(i);
+            nameVariables.add(value);
         }
-
+        System.out.println("");
         return nameVariables;
     }
 
@@ -188,7 +175,7 @@ public class Assign {
         return functionCalled;
     }
 
-    public boolean typeDataAccept(String typeData1, String typeData2, String dataType3) {
+    public boolean typeDataAccept(String typeData1, String typeData2) {
         boolean compatible = false;
         switch (typeData1) {
             case "INT":
@@ -203,21 +190,171 @@ public class Assign {
                 break;
             case "INTB":
                 if (typeData2.equals("Token valor logico")) {
-                     compatible = true;
+                    compatible = true;
                 }
                 break;
         }
         return compatible;
     }
 
-    public String detectErrorTypeAssign() {
+    private String detectErrorInDeclarationVariable() {
         String errString = "";
-        if(this.variablesToCompare.isEmpty()){
-            if(this.symbolNumericAssign.size() == 1){
-                String symbol = this.symbolNumericAssign.get(0);
-                if(!this.typeDataAccept(this.v.getTypeVariable(), symbol, "")){
-                    errString += "Error tipo 2::= El tipo de asignacion de: " + v.getIdVariable() + " no es compatible\n";
+        String symbol = "";
+        String symbolOne = "";
+        switch (this.variablesToCompare.size()) {
+            case 0:
+                if (this.symbolNumericAssign.size() == 1) {
+                    symbol = this.symbolNumericAssign.get(0);
+                    if (!this.typeDataAccept(this.v.getTypeVariable(), symbol)) {
+                        errString += "Error tipo 2::= El tipo de asignacion/comparacion de : "
+                                + this.v.getIdVariable() + " no es compatible\n";
+                    }
+                } else if (this.symbolNumericAssign.size() == 2) {
+                    symbol = this.symbolNumericAssign.get(0);
+                    symbolOne = this.symbolNumericAssign.get(1);
+                    if (symbol.equals(symbolOne)) {
+                        if (!this.typeDataAccept(this.v.getTypeVariable(), symbol)) {
+                            errString += "Error tipo 2::= El tipo de asignacion/comparacion de : "
+                                    + this.v.getIdVariable() + " no es compatible\n";
+                        }
+                    } else {
+                        errString += "Error tipo 3::= operacion entre tipos no compatible\n";
+                    }
                 }
+                break;
+            case 1:
+                Variable variable = this.variablesToCompare.get(0);
+                if (this.symbolNumericAssign.size() == 1) {
+                    symbol = this.symbolNumericAssign.get(0);
+                    if (this.typeDataAccept(variable.getTypeVariable(), symbol)) {
+                        if (!this.typeDataAccept(this.v.getTypeVariable(), symbol)) {
+                            errString += "Error tipo 2::= El tipo de asignacion/comparacion de : "
+                                    + this.v.getIdVariable() + " no es compatible\n";
+                        }
+                    } else {
+                        errString += "Error tipo 2::= El tipo de operacion entre tipos no es compatible\n";
+                    }
+                } else {
+                    String typeDataVariable = this.v.getTypeVariable();
+                    String typeDataVariable1 = variable.getTypeVariable();
+                    if (!typeDataVariable.equals(typeDataVariable1)) {
+                        errString += "Error tipo 2::= El tipo de asignacion/comparacion de : "
+                                + this.v.getIdVariable() + " no es compatible\n";
+                    }
+                }
+                break;
+            case 2:
+                Variable variableOne = this.variablesToCompare.get(0);
+                Variable variableTwo = this.variablesToCompare.get(1);
+                String typeOne = variableOne.getTypeVariable();
+                String typeTwo = variableTwo.getTypeVariable();
+                if (typeOne.equals(typeTwo)) {
+                    String typeThree = this.v.getTypeVariable();
+                    if (!typeThree.equals(typeOne)) {
+                        errString += "Error tipo 2::= El tipo de asignacion/comparacion de : "
+                                + this.v.getIdVariable() + " no es compatible\n";
+                    }
+                } else {
+                    errString += "Error tipo 3::= operacion entre tipos no compatible\n";
+                }
+                break;
+            default:
+                break;
+        }
+        return errString;
+    }
+
+    private String detectErrorInAssignSingleVariable() {
+        String errString = "";
+        if (this.symbolNumericAssign.size() == 1) {
+            Variable variable = this.variablesToCompare.get(0);
+            String symbol = this.symbolNumericAssign.get(0);
+            if (!this.typeDataAccept(variable.getTypeVariable(), symbol)) {
+                errString += "Error tipo 2::= El tipo de asignacion/comparacion de : "
+                        + variable.getIdVariable() + " no es compatible\n";
+            }
+        } else if (this.symbolNumericAssign.size() == 2) {
+            String symbol = this.symbolNumericAssign.get(0);
+            String symbolOne = this.symbolNumericAssign.get(1);
+            if (symbol.equals(symbolOne)) {
+                Variable variable = this.variablesToCompare.get(0);
+                if (!this.typeDataAccept(variable.getTypeVariable(), symbol)) {
+                    errString += "Error tipo 2::= El tipo de asignacion/comparacion de : "
+                            + variable.getIdVariable() + " no es compatible\n";
+                }
+            } else {
+                errString += "Error tipo 3::= operacion entre tipos no compatible\n";
+            }
+        }
+        return errString;
+    }
+
+    private String detectErrorInAssignDoubleVariable() {
+        String errString = "";
+        Variable variable = this.variablesToCompare.get(0);
+        Variable variable1 = this.variablesToCompare.get(1);
+        if (this.symbolNumericAssign.size() == 1) {
+            String symbol = this.symbolNumericAssign.get(0);
+            if (this.typeDataAccept(variable.getTypeVariable(), symbol)) {
+                if (!this.typeDataAccept(variable1.getTypeVariable(), symbol)) {
+                    errString += "Error tipo 5::= El tipo de asignacion/comparacion de: "
+                            + variable1.getIdVariable() + " no es compatible\n";
+                }
+            } else {
+                errString += "Error tipo 4::= El tipo de asignacion/comparacion de: "
+                        + variable.getIdVariable() + " no es compatible\n";
+            }
+        } else {
+            String typeOne = variable.getTypeVariable();
+            String typeTwo = variable1.getTypeVariable();
+            if (!typeOne.equals(typeTwo)) {
+                errString += "Error tipo 2::= El tipo de asignacion/comparacion de: "
+                        + variable.getIdVariable() + " no es compatible\n";
+            }
+        }
+        return errString;
+    }
+
+    private String detectErrorsInAssignTripleVariable() {
+        String errString = "";
+        Variable variableOne = this.variablesToCompare.get(0);
+        Variable variableTwo = this.variablesToCompare.get(1);
+        Variable variableThree = this.variablesToCompare.get(2);
+        String typeOne = variableTwo.getTypeVariable();
+        String typeTwo = variableThree.getTypeVariable();
+        String typeThree = variableOne.getTypeVariable();
+        if (typeOne.equals(typeTwo)) {
+            if (!typeThree.equals(typeTwo)) {
+                errString += "Error tipo 2::= El tipo de asignacion/comparacion de: "
+                        + variableOne.getIdVariable() + " no es compatible\n";
+            }
+        } else {
+            errString += "Error tipo 3::= operacion entre tipos no compatible\n";
+        }
+        return errString;
+    }
+
+    public String detectErrorTypeAssign() {
+        System.out.println("");
+        String errString = "";
+        if (this.v != null) {
+            //System.out.println("Entre al caso variable");
+            errString += this.detectErrorInDeclarationVariable();
+        } else {
+            switch (this.variablesToCompare.size()) {
+                case 1:
+                    //una variable ejemplo a = 5/a = 5+3
+                    errString += this.detectErrorInAssignSingleVariable();
+                    break;
+                case 2:
+                    //una variable ejemplo a = a + 2
+                    errString += this.detectErrorInAssignDoubleVariable();
+                    break;
+                case 3:
+                    errString += this.detectErrorsInAssignTripleVariable();
+                    break;
+                default:
+                    break;
             }
         }
         return errString;

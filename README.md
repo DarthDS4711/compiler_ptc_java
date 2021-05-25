@@ -41,6 +41,14 @@ Contributors names and contact info
 * Ian Noe Prieto Puga
 
 ## Version History
+* 1.1.1 T1 (Beta 1)
+    * Detección numero paramtros de función
+    * Errores relacionados con la deteccion de tipos corregidos
+    * Errores relacionados a la deteccion de variables
+    * Detección de tipos de asignación correctos entre asignaciones u operaciones
+        * Ejemplo (INT a = 5 + c, FLOAT g = c  + a , INTB y = g)
+    * Errores menores corregidos 
+    * Primera beta funcional del analizador semántico
 * 1.1.1 G5 (alpha 5)
     * Detección numero paramtros de función
     * Detección de tipos en las variables pasadas como parametro

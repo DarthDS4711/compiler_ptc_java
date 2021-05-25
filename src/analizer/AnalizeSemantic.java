@@ -156,6 +156,7 @@ public class AnalizeSemantic {
         if (a.getFunctionCalled() == null) {
             if (a.getV() != null) {
                 this.listVariables.add(a.getV());
+                //a.addVariableToCompare(a.getV());
             }
             error += this.detectErrorsUndeclaredVariables(a);
         } 

@@ -64,7 +64,7 @@ public class BlockCode {
     private String setTypeBlockFor(TokenInLine line){
         String errString = "";
         int position = this.detectPositionSeparator(line);
-        System.out.println("position = " + position);
+        //System.out.println("position = " + position);
         TokenInLine line1 = new TokenInLine();
         for(int i = 0; i < position; i++){
             Token t = line.getToken(i);
@@ -72,7 +72,7 @@ public class BlockCode {
         }
         Assign a = new Assign();
         a.detectAsign(line1);
-        System.out.println(a.getV().getIdVariable());
+        //System.out.println(a.getV().getIdVariable());
         this.listVariablesBlock.add(a.getV());
         line1 = new TokenInLine();
         for(int i = (position + 1); i < line.size(); i++){
