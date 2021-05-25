@@ -23,6 +23,7 @@ public class InputSourceCode {
         this.sourceCode = sourceCode;
         this.line = new TokenInLine();
         this.table = new TableSymbols();
+        this.errorsInSintax = false;
     }
 
     public void analizeLexical(List<Token> listTokens) throws IOException {
@@ -179,6 +180,7 @@ public class InputSourceCode {
                     + " Columna: " + (sym.left + 1)
                     + ", Texto: \"" + sym.value + "\"";
         }
+        this.errorsInSintax = !errorsSyntax.equals("Analisis realizado correctamente");
         return errorsSyntax;
     }
     
@@ -189,7 +191,9 @@ public class InputSourceCode {
         }
         //this.table.printAllTable();
         this.semanticToAnalize = new AnalizeSemantic(this.table);
-        errorrsAndwarnings += this.semanticToAnalize.detectAndInicializeTheTableSymbol();
+        if(!this.errorsInSintax){
+            errorrsAndwarnings += this.semanticToAnalize.detectAndInicializeTheTableSymbol();
+        }
         return errorrsAndwarnings;
     }
     
@@ -197,4 +201,5 @@ public class InputSourceCode {
     private TableSymbols table;
     private TokenInLine line;
     private AnalizeSemantic semanticToAnalize;
+    private boolean errorsInSintax;
 }

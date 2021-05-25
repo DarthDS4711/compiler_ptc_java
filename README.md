@@ -41,6 +41,12 @@ Contributors names and contact info
 * Ian Noe Prieto Puga
 
 ## Version History
+* 1.1.1 G5 (alpha 5)
+    * Detección numero paramtros de función
+    * Detección de tipos en las variables pasadas como parametro
+    * Detección de tipos de asignación correctos entre asignaciones simples
+        * Ejemplo (INT a = 5, FLOAT g = 8.8, INTB y = TRUE)
+    * Errores menores corregidos 
 * 1.1.1 G4 (alpha 4)
     * Deteccion de las funciones declaradas por el usuario
     * Detección de las variables empleadas como parametros

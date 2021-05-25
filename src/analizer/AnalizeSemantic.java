@@ -8,7 +8,6 @@ public class AnalizeSemantic {
 
     private List<Variable> listVariables;
     private List<Function> listFunctions;
-    private List<Assign> listAssigns;
     private List<Assign> listAssignsFunctions;
     private List<BlockCode> listBlockCodes;
     private TableSymbols table;
@@ -22,7 +21,6 @@ public class AnalizeSemantic {
         this.table = table;
         this.listVariables = new ArrayList<>();
         this.listFunctions = new ArrayList<>();
-        this.listAssigns = new ArrayList<>();
         this.listAssignsFunctions = new ArrayList<>();
         this.listBlockCodes = new ArrayList<>();
         this.auxInLines = new ArrayList<>();
@@ -55,8 +53,8 @@ public class AnalizeSemantic {
                 errors += this.detectErrorsInAssignGlobal(line);
             }
         }
-        errors += this.detectErrorsInBlocks();
         errors += this.detectErrorsInFunctions();
+        errors += this.detectErrorsInBlocks();
         errors += this.detectErrorsInCalledFunction();
         errors += this.detectUnusedFunctions();
         errors += this.detectUnusedvariables();
@@ -66,6 +64,7 @@ public class AnalizeSemantic {
     private void assingFunction() {
         Function function = new Function();
         function.setListPreviusVariables(this.listVariables);
+        function.setListFunctions(this.listFunctions);
         function.setLines(this.auxInLines);
         this.listFunctions.add(function);
         this.auxInLines = new ArrayList<>();
@@ -73,26 +72,35 @@ public class AnalizeSemantic {
 
     private String detectErrorsInCalledFunction() {
         String error = "";
-        System.out.println("tamanio: " + this.listAssignsFunctions.size());
         for (Assign a : this.listAssignsFunctions) {
             String nameFunctionAssign = a.getFunctionCalled().getNameFunction();
-            System.out.println("nameFunctionAssign = " + nameFunctionAssign);
             if (!nameFunctionAssign.equals(" ")) {
                 int result = this.detectErrorsUndeclaredFunction(nameFunctionAssign);
                 if (result != -1) {
                     this.listFunctions.get(result).setUsedFunction(true);
-                    List<String> nameVariables = a.getFunctionCalled().getNameParams();
-                    for (int index = 0; index < nameVariables.size(); index++) {
-                        String nameVariable = nameVariables.get(index);
-                        if (!nameVariable.equals(" ")) {
-                            int resultPrev = this.detectErrorsUndeclaredVariable(nameVariable);
-                            if (resultPrev == -1) {
-                                error += "La variable como parametro: " + nameVariable + " no ha sido declarada\n";
-                            } else {
-                                this.listVariables.get(result).setUsed(true);
-
+                    Function function = this.listFunctions.get(result);
+                    FunctionCalled fCall = a.getFunctionCalled();
+                    if (function.getNumberParams() == fCall.getNumberParams()) {
+                        List<String> nameVariables = a.getFunctionCalled().getNameParams();
+                        int subIndex = 0;
+                        for (int index = 0; index < nameVariables.size(); index++) {
+                            String nameVariable = nameVariables.get(index);
+                            if (!nameVariable.equals(" ")) {
+                                int resultPrev = this.detectErrorsUndeclaredVariable(nameVariable);
+                                if (resultPrev == -1) {
+                                    error += "La variable como parametro: " + nameVariable + " no ha sido declarada\n";
+                                } else {
+                                    this.listVariables.get(resultPrev).setUsed(true);
+                                    Variable v = this.listVariables.get(resultPrev);
+                                    if (!function.detectSameTypeVariableParams(v, subIndex)) {
+                                        error += "Error: el tipo de la variable: " + nameVariable + " no es el correcto\n";
+                                        subIndex++;
+                                    }
+                                }
                             }
                         }
+                    } else {
+                        error += "Error el numero de parametros no es el correcto\n";
                     }
                 } else {
                     error += "La funcion: " + nameFunctionAssign + " no ha sido declarada\n";
@@ -116,6 +124,7 @@ public class AnalizeSemantic {
         BlockCode code = new BlockCode();
         code.setListPreviusVariables(this.listVariables);
         code.setLines(this.auxInLines);
+        code.setListFunctions(listFunctions);
         this.listBlockCodes.add(code);
         this.auxInLines = new ArrayList<>();
     }
@@ -144,36 +153,41 @@ public class AnalizeSemantic {
         Assign a = new Assign();
         a.detectAsign(line);
         String error = "";
-        this.listAssigns.add(a);
-        int i = 0;
-        if (a.getFunctionCalled() != null) {
+        if (a.getFunctionCalled() == null) {
+            if (a.getV() != null) {
+                this.listVariables.add(a.getV());
+            }
+            error += this.detectErrorsUndeclaredVariables(a);
+        } 
+        else if (a.getFunctionCalled() != null) {
             this.listAssignsFunctions.add(a);
         }
-        if (a.getV() != null) {
-            this.listVariables.add(a.getV());
-        }
-        if (a.getFunctionCalled() == null) {
-            List<String> nameVariables = a.getNameVariables();
-            for (i = (a.getV() != null) ? 1 : 0; i < nameVariables.size(); i++) {
-                String nameVariable = nameVariables.get(i);
-                if (!nameVariable.equals(" ")) {
-                    int result = this.detectErrorsUndeclaredVariable(nameVariable);
-                    if (result == -1) {
-                        error += "La variable: " + nameVariable + " no ha sido declarada\n";
-                    } else {
-                        this.listVariables.get(result).setUsed(true);
-
-                    }
-                }
-
-            }
-        }
-
         return error;
     }
 
+    private String detectErrorsUndeclaredVariables(Assign a) {
+        String errors = "";
+        int i = 0;
+        List<String> nameVariables = a.getNameVariables();
+        for (i = (a.getV() != null) ? 1 : 0; i < nameVariables.size(); i++) {
+            String nameVariable = nameVariables.get(i);
+            if (!nameVariable.equals(" ")) {
+                int result = this.detectErrorsUndeclaredVariable(nameVariable);
+                if (result == -1) {
+                    errors += "Error tipo 1::= La variable: " + nameVariable + " no ha sido declarada\n";
+                } else {
+                    Variable variable = this.listVariables.get(result);
+                    variable.setUsed(true);
+                    a.addVariableToCompare(variable);
+                }
+            }
+
+        }
+        errors += a.detectErrorTypeAssign();
+        return errors;
+    }
+
     private int detectErrorsUndeclaredFunction(String nameVariable) {
-        System.out.println("Size: " + this.listFunctions.size());
         for (int i = 0; i < this.listFunctions.size(); i++) {
             Function f = this.listFunctions.get(i);
             String nameFun = f.getNameFunction();
@@ -187,14 +201,13 @@ public class AnalizeSemantic {
     public String detectUnusedvariables() {
         String warning = "";
         for (Variable v : this.listVariables) {
-            //System.out.println(v.isUsed());
             if (!v.isUsed()) {
                 warning += "Advertencia ::=  la variable: " + v.getIdVariable() + " no ha sido utilizada\n";
             }
         }
         return warning;
     }
-    
+
     public String detectUnusedFunctions() {
         String warning = "";
         for (Function f : this.listFunctions) {
@@ -233,30 +246,6 @@ public class AnalizeSemantic {
             }
         }
         return position;
-    }
-
-    public void detectErrors() {
-        String nameVariable = " ";
-        for (Assign a : this.listAssigns) {
-            if (a.getV() != null) {
-                nameVariable = a.getV().getIdVariable();
-            } else {
-                nameVariable = a.getNameVariable();
-            }
-            int result = this.detectErrorsUndeclaredVariable(nameVariable);
-            if (result == -1) {
-                System.out.println("La variable: " + nameVariable + " no existe");
-            } else {
-                this.listVariables.get(result).setUsed(true);
-            }
-        }
-    }
-
-    public void printVariablesDetect() {
-        for (Assign a : this.listAssigns) {
-            a.printInfo();
-        }
-
     }
 
 }

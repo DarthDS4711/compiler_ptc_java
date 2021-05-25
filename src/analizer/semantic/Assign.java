@@ -14,10 +14,12 @@ import java.util.*;
  */
 public class Assign {
 
+    private List<Variable> variablesToCompare;
     private Variable v;
     private String symbolEqual;
+    private String valueOfSymbolOperation = " ";
     private List<String> symbolsToAsign;
-    private String symbolNumericAssign[];
+    private List<String>symbolNumericAssign;
     private String nameVariableAssign;
     private String symbolOperation;
     private FunctionCalled functionCalled;
@@ -32,12 +34,17 @@ public class Assign {
     public Assign() {
         this.v = null;
         this.symbolsToAsign = new ArrayList<>();
+        this.variablesToCompare = new ArrayList<>();
         this.functionCalled = null;
-        this.symbolNumericAssign = new String[2];
+        this.symbolNumericAssign = new ArrayList<>();
         this.nameVariableAssign = " ";
         this.symbolEqual = " ";
         this.symbolOperation = " ";
         this.contextAssign = " ";
+    }
+
+    public void addVariableToCompare(Variable v) {
+        this.variablesToCompare.add(v);
     }
 
     public String getTypeVariableAssign() {
@@ -73,21 +80,42 @@ public class Assign {
     }
 
     private boolean isSymbolOperation(String token) {
-        if (token.equals("Token suma")) {
-            return true;
-        } else if (token.equals("Token resta")) {
-            return true;
-        } else if (token.equals("Token multiplicacion")) {
-            return true;
-        } else if (token.equals("Token division")) {
-            return true;
-        } else if (token.equals("Token modulo")) {
-            return true;
+        switch (token) {
+            case "Token suma":
+                return true;
+            case "Token resta":
+                return true;
+            case "Token multiplicacion":
+                return true;
+            case "Token division":
+                return true;
+            case "Token modulo":
+                return true;
+            default:
+                break;
         }
         return false;
     }
 
-    public void assingFunction(TokenInLine line){
+    private boolean isValueOperation(String token) {
+        boolean flag = false;
+        switch (token) {
+            case "Token numero real":
+                flag = true;
+                break;
+            case "Token numero entero":
+                flag = true;
+                break;
+            case "Token valor logico":
+                flag = true;
+                break;
+            default:
+                break;
+        }
+        return flag;
+    }
+
+    public void assingFunction(TokenInLine line) {
         this.functionCalled = new FunctionCalled();
         this.functionCalled.setNameFunction(this.nameFunctionAssign);
         this.functionCalled.setLineParams(line);
@@ -96,39 +124,32 @@ public class Assign {
     public void detectAsign(TokenInLine line) {
         String nameVariable = " ";
         String typeVariable = " ";
-        int numericSymbol = 0;
         for (int i = 0; i < line.size(); i++) {
             Token t = line.getToken(i);
+            String tokenAnalize = t.getTokenResult();
             if (t.getTokenResult().equals("T_Dato")) {
                 typeVariable = t.getLexeme();
-            }
-            if (t.getTokenResult().equals("Token identificador") && !typeVariable.equals(" ")) {
+            } else if (t.getTokenResult().equals("Token identificador") && !typeVariable.equals(" ")) {
                 nameVariable = t.getLexeme();
                 this.v = new Variable(nameVariable, typeVariable);
-            }
-            if (t.getTokenResult().equals("Token identificador") && this.nameVariableAssign.equals(" ")) {
+            } else if (t.getTokenResult().equals("Token identificador") && this.nameVariableAssign.equals(" ")) {
                 this.nameVariableAssign = t.getLexeme();
-            }
-            if (t.getTokenResult().equals("Token parentesis abierto") && !this.nameVariableAssign.equals(" ")) {
+            } else if (t.getTokenResult().equals("Token parentesis abierto") && !this.nameVariableAssign.equals(" ")) {
                 this.nameFunctionAssign = this.nameVariableAssign;
                 assingFunction(line);
                 this.nameVariableAssign = " ";
                 break;
-            }
-            if (t.getTokenResult().equals("Token igual")) {
+            } else if (t.getTokenResult().equals("Token igual")) {
                 this.symbolEqual = t.getLexeme();
-            }
-            if (t.getTokenResult().equals("Token identificador") && !this.symbolEqual.equals(" ")) {
+            } else if (t.getTokenResult().equals("Token identificador") && !this.symbolEqual.equals(" ")) {
                 this.symbolsToAsign.add(t.getLexeme());
-            } else if (t.getTokenResult().equals("Token numero real") && !this.symbolEqual.equals(" ")) {
-                this.symbolNumericAssign[numericSymbol] = t.getTokenResult();
-                numericSymbol++;
-            } else if (t.getTokenResult().equals("Token numero entero") && !this.symbolEqual.equals(" ")) {
-                this.symbolNumericAssign[numericSymbol] = t.getTokenResult();
-                numericSymbol++;
-            }
-            if (this.isSymbolOperation(t.getTokenResult()) && !this.symbolEqual.equals(" ")) {
+            } else if (this.isValueOperation(tokenAnalize)) {
+                this.symbolNumericAssign.add(t.getTokenResult());
+            } else if (this.isSymbolOperation(t.getTokenResult()) && !this.symbolEqual.equals(" ")) {
                 this.symbolOperation = t.getLexeme();
+            } else if (t.getTokenResult().equals("Token relacional") && (!this.symbolEqual.equals(" ") || this.symbolEqual.equals(" "))) {
+                this.symbolOperation = t.getTokenResult();
+                this.valueOfSymbolOperation = t.getLexeme();
             }
         }
     }
@@ -159,21 +180,46 @@ public class Assign {
                 }
             }
         }
-        for (String a : nameVariables) {
-            //System.out.println("a = " + a);
-        }
-        //System.out.println("");
-        return nameVariables;
-    }
-    
-    public void printInfo() {
 
+        return nameVariables;
     }
 
     public FunctionCalled getFunctionCalled() {
         return functionCalled;
     }
 
-   
+    public boolean typeDataAccept(String typeData1, String typeData2, String dataType3) {
+        boolean compatible = false;
+        switch (typeData1) {
+            case "INT":
+                if (typeData2.equals("Token numero entero")) {
+                    compatible = true;
+                }
+                break;
+            case "FLOAT":
+                if (typeData2.equals("Token numero real")) {
+                    compatible = true;
+                }
+                break;
+            case "INTB":
+                if (typeData2.equals("Token valor logico")) {
+                     compatible = true;
+                }
+                break;
+        }
+        return compatible;
+    }
 
+    public String detectErrorTypeAssign() {
+        String errString = "";
+        if(this.variablesToCompare.isEmpty()){
+            if(this.symbolNumericAssign.size() == 1){
+                String symbol = this.symbolNumericAssign.get(0);
+                if(!this.typeDataAccept(this.v.getTypeVariable(), symbol, "")){
+                    errString += "Error tipo 2::= El tipo de asignacion de: " + v.getIdVariable() + " no es compatible\n";
+                }
+            }
+        }
+        return errString;
+    }
 }

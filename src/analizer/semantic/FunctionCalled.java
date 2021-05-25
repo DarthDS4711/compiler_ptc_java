@@ -1,7 +1,10 @@
 package analizer.semantic;
+
 import Classes.*;
 import java.util.*;
+
 public class FunctionCalled {
+
     private String nameFunction;
     private List<String> nameParams;
 
@@ -16,20 +19,25 @@ public class FunctionCalled {
     public void setNameFunction(String nameFunction) {
         this.nameFunction = nameFunction;
     }
-    
-    public void setLineParams(TokenInLine line){
-        for(int i = 2; i < line.size(); i++){
-            Token t = line.getToken(i);
-            if(t.getTokenResult().equals("Token identificador")){
-                this.nameParams.add(t.getLexeme());
+
+    public void setLineParams(TokenInLine line) {
+        Token token = line.getToken(0);
+        if (!token.getLexeme().equals("FUN")) {
+            for (int i = 2; i < line.size(); i++) {
+                Token t = line.getToken(i);
+                if (t.getTokenResult().equals("Token identificador")) {
+                    this.nameParams.add(t.getLexeme());
+                }
             }
         }
+    }
+    
+    public int getNumberParams(){
+        return this.nameParams.size();
     }
 
     public List<String> getNameParams() {
         return nameParams;
     }
-    
-    
-    
+
 }
